@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Risco - P4.261 CETESB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8fafc;
+        }
+        .risk-low {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .risk-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .risk-high {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-blue-600 text-white py-8 px-4">
+        <div class="container mx-auto text-center">
+            <h1 class="text-3xl font-bold mb-2">Resultado da Análise de Risco</h1>
+            <p class="text-lg">Conforme Norma P4.261 da CETESB</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto py-8 px-4">
+        <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Dados Informados</h2>
+            <div class="mb-6 space-y-3">
+                <p><span class="font-medium">Empresa:</span> <span id="displayCompany"></span></p>
+                <p><span class="font-medium">Material:</span> <span id="displayMaterial"></span></p>
+                <p><span class="font-medium">Quantidade:</span> <span id="displayQuantity"></span> kg</p>
+                <p><span class="font-medium">Proximidade hídrica:</span> <span id="displayProximity"></span></p>
+                <p><span class="font-medium">Medidas de mitigação:</span> <span id="displayMitigation"></span></p>
+            </div>
+
+            <div class="mb-6 p-4 rounded-lg" id="riskLevel">
+                <h2 class="text-xl font-semibold mb-2">Nível de Risco Calculado</h2>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-2xl font-bold" id="riskScore">0</p>
+                        <p class="text-sm" id="riskDescription"></p>
+                    </div>
+                    <div class="text-4xl" id="riskIcon"></div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-2 text-gray-800">Recomendações</h2>
+                <ul class="list-disc pl-5 space-y-1" id="recommendations"></ul>
+            </div>
+
+            <div class="flex space-x-4">
+                <button onclick="window.location.href='index.html'" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i> Voltar
+                </button>
+                <button onclick="generateReport()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    Gerar Relatório <i class="fas fa-file-alt ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto text-center">
+            <p>Sistema de Análise de Risco conforme Norma P4.261 - CETESB</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Load data from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const formData = JSON.parse(localStorage.getItem('riskFormData'));
+            if (formData) {
+                document.getElementById('displayCompany').textContent = formData.companyName;
+                document.getElementById('displayMaterial').textContent = getMaterialName(formData.materialType);
+                document.getElementById('displayQuantity').textContent = formData.quantity;
+                document.getElementById('displayProximity').textContent = getProximityName(formData.proximity);
+                document.getElementById('displayMitigation').textContent = getMitigationNames(formData.mitigation);
+
+                const riskScore = calculateRiskScore(formData);
+                document.getElementById('riskScore').textContent = riskScore;
+
+                const riskLevel = getRiskLevel(riskScore);
+                const riskElement = document.getElementById('riskLevel');
+                riskElement.classList.add(`risk-${riskLevel}`);
+                document.getElementById('riskDescription').textContent = getRiskDescription(riskLevel);
+                document.getElementById('riskIcon').innerHTML = getRiskIcon(riskLevel);
+
+                document.getElementById('recommendations').innerHTML = getRecommendations(riskLevel, formData.mitigation);
+            }
+        });
+
+        function generateReport() {
+            localStorage.setItem('generateReport', 'true');
+            window.location.href = 'report.html';
+        }
+
+        function getMaterialName(value) {
+            const materials = {
+                'quimico': 'Produto Químico',
+                'residuo': 'Resíduo Perigoso',
+                'oleo': 'Óleo e Derivados',
+                'outro': 'Outro'
+            };
+            return materials[value] || 'Não especificado';
+        }
+
+        function getProximityName(value) {
+            const proximities = {
+                '1': 'Menos de 1 km',
+                '2': '1 a 5 km',
+                '3': 'Mais de 5 km'
+            };
+            return proximities[value] || 'Não especificado';
+        }
+
+        function getMitigationNames(values) {
+            if (!values || values.length === 0) return 'Nenhuma medida informada';
+            const mitigations = {
+                'plano': 'Plano de Emergência',
+                'contensao': 'Sistema de Contenção',
+                'monitoramento': 'Monitoramento Contínuo'
+            };
+            return values.map(v => mitigations[v]).join(', ');
+        }
+    </script>
+</body>
+</html>
