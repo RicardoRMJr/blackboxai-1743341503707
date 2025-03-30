@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Risco - P4.261 CETESB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @media print {
+            body {
+                font-family: 'Roboto', sans-serif;
+                background-color: white;
+                color: black;
+                font-size: 12pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            .risk-low {
+                background-color: #d1fae5 !important;
+                color: #065f46 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .risk-medium {
+                background-color: #fef3c7 !important;
+                color: #92400e !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .risk-high {
+                background-color: #fee2e2 !important;
+                color: #991b1b !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8fafc;
+        }
+        .header-logo {
+            height: 80px;
+        }
+        .risk-low {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .risk-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .risk-high {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto py-8 px-4 max-w-4xl bg-white">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8 no-print">
+            <button onclick="window.location.href='calculate.html'" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-200">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar
+            </button>
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                <i class="fas fa-print mr-2"></i> Imprimir
+            </button>
+        </div>
+
+        <!-- Report Content -->
+        <div class="mb-8 text-center">
+            <img src="https://images.pexels.com/photos/89778/stamp-brazil-brazilian-stamp-89778.jpeg" alt="Logo CETESB" class="header-logo mx-auto mb-4">
+            <h1 class="text-3xl font-bold mb-2">Relatório de Análise de Risco</h1>
+            <p class="text-lg">Conforme Norma P4.261 da CETESB</p>
+            <p class="text-gray-600 mt-2">Emitido em: <span id="reportDate"></span></p>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">1. Identificação</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <p class="font-medium">Empresa:</p>
+                    <p id="reportCompany"></p>
+                </div>
+                <div>
+                    <p class="font-medium">Endereço:</p>
+                    <p id="reportAddress"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">2. Dados do Risco</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <p class="font-medium">Tipo de Material:</p>
+                    <p id="reportMaterial"></p>
+                </div>
+                <div>
+                    <p class="font-medium">Quantidade:</p>
+                    <p id="reportQuantity"></p>
+                </div>
+                <div>
+                    <p class="font-medium">Proximidade de Fontes Hídricas:</p>
+                    <p id="reportProximity"></p>
+                </div>
+                <div>
+                    <p class="font-medium">Medidas de Mitigação:</p>
+                    <p id="reportMitigation"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">3. Resultado da Análise</h2>
+            <div class="p-4 rounded-lg mb-4" id="reportRiskLevel">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium">Nível de Risco:</p>
+                        <p class="text-2xl font-bold" id="reportRiskScore"></p>
+                        <p class="text-sm" id="reportRiskDescription"></p>
+                    </div>
+                    <div class="text-4xl" id="reportRiskIcon"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">4. Recomendações</h2>
+            <ul class="list-disc pl-5 space-y-2" id="reportRecommendations"></ul>
+        </div>
+
+        <div class="mt-12 pt-4 border-t text-sm text-gray-600">
+            <p class="font-medium">Observações:</p>
+            <p>Este relatório foi gerado automaticamente pelo Sistema de Análise de Risco conforme Norma P4.261 da CETESB.</p>
+            <p class="mt-2">Para validação técnica, consulte um especialista ambiental credenciado.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const now = new Date();
+            document.getElementById('reportDate').textContent = now.toLocaleDateString('pt-BR');
+
+            // Load data from localStorage
+            const formData = JSON.parse(localStorage.getItem('riskFormData'));
+            if (formData) {
+                document.getElementById('reportCompany').textContent = formData.companyName;
+                document.getElementById('reportAddress').textContent = formData.companyAddress || 'Não informado';
+                document.getElementById('reportMaterial').textContent = getMaterialName(formData.materialType);
+                document.getElementById('reportQuantity').textContent = formData.quantity + ' kg';
+                document.getElementById('reportProximity').textContent = getProximityName(formData.proximity);
+                document.getElementById('reportMitigation').textContent = getMitigationNames(formData.mitigation);
+
+                const riskScore = calculateRiskScore(formData);
+                document.getElementById('reportRiskScore').textContent = riskScore;
+
+                const riskLevel = getRiskLevel(riskScore);
+                const riskElement = document.getElementById('reportRiskLevel');
+                riskElement.classList.add(`risk-${riskLevel}`);
+                document.getElementById('reportRiskDescription').textContent = getRiskDescription(riskLevel);
+                document.getElementById('reportRiskIcon').innerHTML = getRiskIcon(riskLevel);
+
+                document.getElementById('reportRecommendations').innerHTML = getRecommendations(riskLevel, formData.mitigation);
+            }
+        });
+
+        function getMaterialName(value) {
+            const materials = {
+                'quimico': 'Produto Químico',
+                'residuo': 'Resíduo Perigoso',
+                'oleo': 'Óleo e Derivados',
+                'outro': 'Outro'
+            };
+            return materials[value] || 'Não especificado';
+        }
+
+        function getProximityName(value) {
+            const proximities = {
+                '1': 'Menos de 1 km',
+                '2': '1 a 5 km',
+                '3': 'Mais de 5 km'
+            };
+            return proximities[value] || 'Não especificado';
+        }
+
+        function getMitigationNames(values) {
+            if (!values || values.length === 0) return 'Nenhuma medida implementada';
+            const mitigations = {
+                'plano': 'Plano de Emergência',
+                'contensao': 'Sistema de Contenção',
+                'monitoramento': 'Monitoramento Contínuo'
+            };
+            return values.map(v => mitigations[v]).join(', ');
+        }
+    </script>
+</body>
+</html>
