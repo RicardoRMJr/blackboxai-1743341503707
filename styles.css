@@ -1,0 +1,28 @@
+/* Additional custom styles */
+.risk-score {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.risk-icon {
+    font-size: 2.5rem;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 1.5cm;
+    }
+    
+    body {
+        line-height: 1.5;
+    }
+    
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    table, figure {
+        page-break-inside: avoid;
+    }
+}
